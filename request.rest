@@ -1,0 +1,19 @@
+GET http://localhost:4000/users
+
+###
+
+POST http://localhost:4000/createUser
+Content-Type: application/json
+
+{
+"name": "amine", "password": "password"
+}
+
+###
+
+POST http://localhost:4000/login 
+Content-Type: application/json
+
+{
+"name": "amine", "password": "password"
+}
