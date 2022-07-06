@@ -1,3 +1,21 @@
+const authenticateToken=(req,res,next)=>{
+    const authHeader=req.headers['authorization']
+    const token = authHeader && authHeader.split(' ')[1]
+    if(token==null)return res.sendStatus(401)
+    jwt.verify(token,process.env.ACCESS_TOKEN_SECRET,(err,user)=>{
+        if(err) return res.send(err)
+        else{
+            req.user=user
+            next()
+        }
+      
+
+     
+        //si il n'ya pas next, on pourra pas continuer vers l'autre callback dans la requeste ????
+        
+    })
+}
+
 require("dotenv").config()
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -5,12 +23,30 @@ const express = require('express')
 const bcrypt = require ('bcrypt');
 const { JsonWebTokenError } = require("jsonwebtoken");
 const users = []
+const validRefreshTokens=[]
+const posts = [
+    {
+      username: 'amine',
+      title: 'Post 1'
+    },
+    {
+      username: 'Jim',
+      title: 'Post 2'
+    }
+  ]
+  
 const jwt=require("jsonwebtoken")
 const app=express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }));
 app.use(cors())
 const port = process.env.TOKEN_SERVER_PORT
+
+app.delete("/logout", (req,res)=>{
+    refreshTokens = refreshTokens.filter( (c) => c != req.body.token)
+    //remove the old refreshToken from the refreshTokens list
+    res.status(204).send("Logged out!")
+    })
 //authentifiaction : 
 app.post("/createUser",async (req,res)=>{
     try{
@@ -42,6 +78,21 @@ app.post("/login",async (req,res)=>{
 
 })
 
+app.post("/accesstoken",(req,res)=>{
+  const refreshToken= req.body.refreshToken
+  if(refreshToken==null) return res.sendStatus(401)
+  if(!refreshToken.includes(validRefreshTokens)) return res.sendStatus(401)
+  jwt.verify(refreshToken,process.env.REFRESH_TOKEN_SECRET,(err,user)=>{
+    if(err) return res.sendStatus(403)
+    const accessToken = generateAccessToken({name:user.name})
+    res.json({accessToken:accessToken})
+  })
+})
+//authenticateToken==>middlewear permettant la verif du token si ça passe, le callback (arg3) va etre executé, sinon rien
+app.get("/ressource",authenticateToken,(req,res)=>{
+   // res.json(posts.filter(post => post.username === req.user.name))
+   res.send("a")
+})
 app.listen(port,()=>{console.log(" Authorization server is running ... ")})
 
 //accessToken :
@@ -56,6 +107,7 @@ const generateRefreshToken=(user)=>{
     refreshTokens.push(refreshToken)
     return refreshToken
 }
+
 const run = async ()=>{
 
 }

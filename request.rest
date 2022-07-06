@@ -1,7 +1,17 @@
-GET http://localhost:4000/users
+GET http://localhost:4000/ressource
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE2NTcxMDA5NzMsImV4cCI6MTY1NzEwMTg3M30.Sl9W4obC1loiI2gYGnOiopijQzpJ4lql_j_dKLiDezo
 
+{
+    "user":{"name":"amine"}
+}
 ###
+POST http://localhost:4000/accesstoken 
+Content-Type: application/json
 
+{
+"refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYW1pbmUiLCJpYXQiOjE2NTcxMDA5NTUsImV4cCI6MTY1NzEwMjE1NX0.5z4Q41Tvmugqgan6KGvu-Zqak2vdERzrWMjax5dCksw"
+}
+###
 POST http://localhost:4000/createUser
 Content-Type: application/json
 
